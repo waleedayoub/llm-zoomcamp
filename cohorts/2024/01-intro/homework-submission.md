@@ -55,9 +55,16 @@ pip install elasticsearch
 Which function do you use for adding your data to elastic?
 
 * `insert`
-* `index`
+* `index` <--
 * `put`
 * `add`
+
+### Response
+We use the `index` function to add data to elasticsearch by looping through each item in the list of documents and adding each entry to the index:
+```python
+for doc in tqdm(documents):
+    es_client.index(index=index_name, body=doc)
+```
 
 ## Q3. Searching
 
@@ -70,11 +77,68 @@ Use only `question` and `text` fields and give `question` a boost of 4, and use 
 What's the score for the top ranking result?
 
 * 94.05
-* 84.05
+* 84.05 <--
 * 74.05
 * 64.05
 
 Look at the `_score` field.
+
+### Response
+- In order to answre this question, you need to go through the whole process of indexing documents based on settings that excludes `section` from the `index_settings` and also doesn't have a `filter` set in the `search_query`.
+- Here's how it goes:
+Step 1: Create your index settings
+```python
+index_settings = {
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "properties": {
+            "text": {"type": "text"},
+            #"section": {"type": "text"},
+            "question": {"type": "text"},
+            "course": {"type": "keyword"}
+        }
+    }
+}
+
+#index_name = "course-questions"
+index_name = "course-questions-homework"
+
+es_client.indices.create(index=index_name, body=index_settings)
+```
+
+Step 2: Index your documents
+```python
+from tqdm.auto import tqdm
+```
+
+Step 3: Create your search query
+```python
+search_query = {
+        "size": 5,
+        "query": {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": question,
+                        #"fields": ["question^3", "text", "section^0.5"],
+                        "fields": ["question^4", "text"],
+                        "type": "best_fields"
+                    }
+                }
+            }
+        }
+    }
+es_client.search(index=index_name, body=search_query)
+```
+Step 4: Get the max score from the hits item
+```python
+es_client.search(index=index_name, body=search_query)['hits']['max_score']
+```
+
+Answer = 84.05
 
 ## Q4. Filtering
 
@@ -83,9 +147,40 @@ Now let's only limit the questions to `machine-learning-zoomcamp`.
 Return 3 results. What's the 3rd question returned by the search engine?
 
 * How do I debug a docker container?
-* How do I copy files from a different folder into docker container’s working directory?
+* How do I copy files from a different folder into docker container’s working directory? <--
 * How do Lambda container images work?
 * How can I annotate a graph?
+
+### Response
+- To do this, the only change needed is to update the `filter` to now include the `machine-learning-zoomcamp` as a keyword filter in the `search_query`
+- Importantly, you don't need to re-index the documents or change the index settings
+```python
+search_query = {
+        "size": 3,
+        "query": {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": question,
+                        #"fields": ["question^3", "text", "section^0.5"],
+                        "fields": ["question^4", "text"],
+                        "type": "best_fields"
+                    }
+                },
+                 "filter": {
+                    "term": {
+                        "course": "machine-learning-zoomcamp"
+                    }
+                }
+            }
+        }
+    }
+```
+- To pull the exact answer:
+```python
+es_client.search(index=index_name, body=search_query)['hits']['hits'][2]['_source']['question']
+```
+Answer: 'How do I copy files from a different folder into docker container’s working directory?'
 
 ## Q5. Building a prompt
 
@@ -117,9 +212,12 @@ CONTEXT:
 What's the length of the resulting prompt? (use the `len` function)
 
 * 962
-* 1462
+* 1462 <--
 * 1962
 * 2462
+
+### Response
+- For some reason, I get 1486 as my answer
 
 ## Q6. Tokens
 
@@ -142,8 +240,25 @@ Use the `encode` function. How many tokens does our prompt have?
 
 * 122
 * 222
-* 322
+* 322 <--
 * 422
+
+### Response
+- The steps to produce the number of tokens using tiktoken are as follows:
+- Import tiktoken and create your prompt text
+```python
+import tiktoken
+results = search_elastic(question)
+myprompt = build_prompt(results)
+```
+- Get the encoding for the specific model you're using and encode the prompt into tokens and then count the tokens
+```python
+encoding = tiktoken.encoding_for_model('gpt-4o')
+tokens = encoding.encode(myprompt)
+num_tokens = len(tokens)
+print(f"Number of tokens in the prompt: {num_tokens}")
+```
+- 
 
 Note: to decode back a token into a word, you can use the `decode_single_token_bytes` function:
 
@@ -156,6 +271,25 @@ encoding.decode_single_token_bytes(63842)
 Let's send the prompt to OpenAI. What's the response?  
 
 Note: you can replace OpenAI with Ollama. See module 2.
+
+### Response:
+To execute a command in a running Docker container, you can use the `docker exec` command. Here are the steps:
+
+1. Find the container ID by listing all running containers with the command:
+   ```
+   docker ps
+   ```
+
+2. Execute a command in the specific container using:
+   ```
+   docker exec -it <container-id> <command>
+   ```
+
+For example, to start a bash session in the container, you would use:
+```
+docker exec -it <container-id> bash
+```
+Click to add a cell.
 
 ## Bonus: calculating the costs (ungraded)
 
