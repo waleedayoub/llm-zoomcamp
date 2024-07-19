@@ -1,5 +1,10 @@
 .DS_Store
 .ipynb_checkpoints/
 __pycache__/
+<<<<<<< HEAD
 .envrc
 cohorts/2024/02-open-source/ollama_files/
+=======
+.venv
+.envrc
+>>>>>>> upstream/main
