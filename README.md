@@ -84,7 +84,15 @@ Implement a search engine: [Video](https://www.youtube.com/watch?v=nMrGK5QgPVE),
 
 ### 6. [Best practices](06-best-practices/)
 
-* Best practices
+* Techniques to improve RAG pipeline
+* Hybrid search
+* Document reranking
+* Hybrid search with LangChain
+
+### 7. [Bonus: End-to-End project example](07-project-example/) (Optional)
+
+* Building an end-to-end fitness assistant project
+* Examples of pre-processing text datasets 
 
 ### LLM Zoomcamp 2024 Competition
 
