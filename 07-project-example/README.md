@@ -68,14 +68,30 @@ README, code readability, etc.
 
 ## 7.6 Summary and closing remarks
 
-https://www.loom.com/share/131a713a09074731884d93dcb1290932
-
+<a href="https://www.youtube.com/watch?v=TW9M5VE8vpo&list=PL3MmuxUbc_hIB4fSqLy_0AfTjVLpgjV3R">
+  <img src="https://markdown-videos-api.jorgenkh.no/youtube/TW9M5VE8vpo">
+</a>
 
 * Changes between 7.5 and 7.6 (postres logging, grafara, cli.py, etc)
 * README file improvements
 * Total cost of the project (~$2) and how to lower it
 * Using generated data for real-life projects
 
+
+## 7.7 Chunking for longer texts
+
+<a href="https://www.youtube.com/watch?v=tyBRP_WewXA&list=PL3MmuxUbc_hIB4fSqLy_0AfTjVLpgjV3R">
+  <img src="https://markdown-videos-api.jorgenkh.no/youtube/tyBRP_WewXA">
+</a>
+
+* Different chunking strategies
+* [Use cases: multiple articles, one article, slide decks](content-processing-summary.md)
+
+Links:
+
+* https://chatgpt.com/share/a4616f6b-43f4-4225-9d03-bb69c723c210
+* https://chatgpt.com/share/74217c02-95e6-46ae-b5a5-ca79f9a07084
+* https://chatgpt.com/share/8cf0ebde-c53f-4c6f-82ae-c6cc52b2fd0b
 
 # Notes
 
